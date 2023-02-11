@@ -1,0 +1,52 @@
+version: "3.6"
+
+services:
+  nvpy:
+    # image: nvcr.io/nvidia/pytorch:23.01-py3
+    image: nvcr.io/nvidia/tensorrt:23.01-py3
+    command: nvidia-smi
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    # user: "1000:1000"       
+    working_dir: /source-files
+    volumes:
+      - .:/source-files
+  # docker-compose run --rm nvpy bash
+  
+  insightface:
+    # image: nvcr.io/nvidia/pytorch:23.01-py3
+    image: insightface:latest
+    # command: nvidia-smi
+    command: python arcfaces-insightface.py
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    # user: "1000:1000"       
+    working_dir: /source-files
+    volumes:
+      - .:/source-files
+
+  tensorflow:
+    image: nvcr.io/nvidia/tensorflow:23.01-tf2-py3
+    command: nvidia-smi
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    volumes: 
+      - ../../:/tfg
+    working_dir: /tfg
+    # docker-compose run --rm tensorflow bash
+
