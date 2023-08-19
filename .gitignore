@@ -4,3 +4,6 @@ nvidia-docker
 project
 code/morphing/__pycache__
 code/morphing/faceops.py
+code/detect-diff/__pycache__
+code/detect-diff/*.csv
+code/detect-diff/faceops.py

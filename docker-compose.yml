@@ -57,18 +57,7 @@ services:
   #     - *imggen
   #   working_dir: /project
 
-  # detect:
-  # # docker compose run --rm detect bash
-  #   <<: *common_config
-  #   # image: neb-dreambooth
-  #   build: 
-  #     context: ./detection
-  #     dockerfile: Dockerfile
-  #   image: neb-detect
-  #   volumes:
-  #     - ./detection:/project
-  #   # working_dir: /project/GANimageDetection/
-  #   working_dir: /project/
+
 
   facemorpher:
     <<: *common_config
@@ -89,6 +78,17 @@ services:
       - *shared
       - ./code/morphing/:/morphing
       - ./code/common/faceops.py/:/morphing/faceops.py
+
+  detect-diff:
+    <<: *common_config
+    build: 
+      context: ./code/detect-diffusion
+      dockerfile: Dockerfile
+    image: neb-detect-diff
+    volumes:
+      - *shared
+      - ./code/detect-diff/:/detect-diff
+      - ./code/common/faceops.py/:/detect-diff/faceops.py
 
 
   # morph-detect:
