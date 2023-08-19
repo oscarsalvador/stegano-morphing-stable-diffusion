@@ -1,0 +1,109 @@
+version: '3.9'
+
+x-common_config: &common_config
+  volumes:
+    # - &dbooth ./dreambooth:/project
+    # - &imggen ./imggen:/project
+    # - &v1 .stable-diffusion-ui/data:/data
+    - .:/project
+  stop_signal: SIGKILL
+  deploy:
+    resources:
+      reservations:
+        devices:
+          - driver: nvidia
+            device_ids: ['1']
+            capabilities: [gpu]
+
+services:
+  # docker compose build dreambooth
+  # docker compose run --rm dreambooth bash
+  dreambooth:
+    <<: *common_config
+    build: 
+      context: ./dreambooth
+      dockerfile: Dockerfile
+    image: neb-dreambooth
+    volumes:
+      - .env:/project/.env
+      - *dbooth
+    working_dir: /project
+
+  # download:
+  #   build: stable-diffusion-ui/services/download/
+  #   profiles: ["download"]
+  #   volumes:
+  #     - *v1
+
+  # auto1111:
+  #   <<: *common_config
+  #   profiles: ["auto"]
+  #   build: stable-diffusion-ui/services/AUTOMATIC1111
+  #   image: sd-auto:62
+  #   ports:
+  #     - "${WEBUI_PORT:-7860}:7860"
+  #   environment:
+  #     - CLI_ARGS=--allow-code --medvram --xformers --enable-insecure-extension-access --api
+
+  imggen:
+  # docker compose build img2img
+  # docker compose run --rm img2img bash
+    <<: *common_config
+    build: 
+      context: ./img2img
+      dockerfile: Dockerfile
+    image: neb-img2img
+    volumes:
+      - .env:/project/.env
+      - *imggen
+    working_dir: /project
+
+  detect:
+  # docker compose run --rm detect bash
+    <<: *common_config
+    # image: neb-dreambooth
+    build: 
+      context: ./detection
+      dockerfile: Dockerfile
+    image: neb-detect
+    volumes:
+      - ./detection:/project
+    # working_dir: /project/GANimageDetection/
+    working_dir: /project/
+
+  morph:
+  # docker compose build morph
+  # docker compose run --rm morph bash
+    <<: *common_config
+    build: 
+      context: ./code/morphing
+      dockerfile: Dockerfile
+    image: neb-morph
+    volumes:
+      # - ./morphing:/morphing
+      # - ./morph-detection:/morph-detection
+      - .:/project
+    # working_dir: /project/GANimageDetection/
+    # working_dir: /project/
+
+  morph-detect:
+  # docker compose build morph
+  # docker compose run --rm morph bash
+    <<: *common_config
+    build: 
+      context: ./morph-detection
+      dockerfile: Dockerfile
+    image: neb-morph-detect
+    volumes:
+      - ./morph-detection:/morph-detection
+    # working_dir: /project/GANimageDetection/
+    # working_dir: /project/
+
+  arcfaces:
+    <<: *common_config
+    build: 
+      context: ./arcfaces
+      dockerfile: Dockerfile
+    image: neb-arcfaces
+    volumes:
+      - ./arcfaces:/arcfaces
