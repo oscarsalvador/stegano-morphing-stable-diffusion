@@ -20,4 +20,4 @@ RUN git clone https://github.com/meilfang/SPL-MAD
 
 # official pre-trained weights mentioned in the repo's readme. Gdrive isnt friendly to wget or curl with large files (security)
 RUN pip install gdown
-RUN gdown https://drive.google.com/uc?id=1kFLp1dWp_sBwC-l-RTVo-LRitKSYxbyv&export=download; wait
+RUN gdown -O /SPL-MAD/casia_smdd.pth https://drive.google.com/uc?id=1kFLp1dWp_sBwC-l-RTVo-LRitKSYxbyv&export=download; wait

@@ -93,12 +93,14 @@ services:
   detect-morph:
     <<: *common_config
     build: 
-      context: .code/detect-morph
+      context: ./code/detect-morph
       dockerfile: Dockerfile
     image: neb-morph-detect
     volumes:
       - *shared
       - ./code/detect-morph:/detect-morph
+    working_dir: /SPL-MAD
+    
 
 
   # arcfaces:

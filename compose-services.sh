@@ -23,17 +23,26 @@ ITERATIONS=100
 #     --out morphing/$MORPH \
 #     --frames facemorph-frames \
 #     --morph $MORPH \
-#     --iterations $ITERATIONS; \
-#     python /morphing/prepare_csvs.py \
-#       --src $SRC_IMG \
-#       --morphs /$FOLDER/morphing/"
+#     --iterations $ITERATIONS"
 # done
 
+# # if it crashes due to lack of memory, reduce the batch size
+# docker compose run --rm morph bash -c "python /morphing/prepare_csvs.py \
+#   --dst $DST_IMG \
+#   --morphs /$FOLDER/morphing/ \
+#   --batch_size 30"
 
-# rm -rf $FOLDER/diff_results
+
+# rm -rf $FOLDER/det_diff_results
 # docker compose run --rm detect-diff bash -c "python main.py \
 #   --data_dir /$FOLDER/morphing/ \
-#   --out_dir /$FOLDER/diff_results \
+#   --out_dir /$FOLDER/det_diff_results \
 #   --csv_file /$FOLDER/morphing/detect-diff.csv"
+
+
+# rm -rf $FOLDER/det_morph_results
+# docker compose run --rm detect-morph bash -c "/detect-morph/wrapper.sh \
+#   /$folder/morphing \
+#   /$folder/det_morph_results"
 
 
