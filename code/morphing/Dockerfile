@@ -6,7 +6,6 @@ RUN apt-get install -y wget git ffmpeg libsm6 libxext6
 
 RUN pip install -q -U --pre triton
 RUN pip install -q \
-  facemorpher \
   opencv-python \
   matplotlib \
   numpy \

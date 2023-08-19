@@ -1,7 +1,6 @@
-caras-ejemplo
-pruebas-generacion
-venvs
-reconocimiento/eigenfaces/Python-Eigenfaces-master
 documentacion/definicion-proyecto.md
 reconocimiento
 nvidia-docker
+project
+code/morphing/__pycache__
+code/morphing/faceops.py
