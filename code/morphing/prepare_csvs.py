@@ -30,7 +30,9 @@ def main():
   if morphs[-1] != "/": morphs += "/"
   morphs_dirs = sorted(os.listdir(morphs))
 
-  m_csv = [["src","cropsize","x1","y1","qf","typ","label"]]
+  diff_csv = [["src","cropsize","x1","y1","qf","typ","label"]]
+  morph_csv = [["img_path","labels"]]
+
   for d in morphs_dirs:
     d = morphs+d
     print(d)
@@ -40,14 +42,18 @@ def main():
 
     img_list = sorted(os.listdir(d))
     for i in img_list:
-      m_csv.append([type + "/" + i,w,x,y,compresion_guess,type,"FALSE"])
+      diff_csv.append([type + "/" + i,w,x,y,compresion_guess,type,"FALSE"])
+      morph_csv.append([type + "/" + i, "attack"])
 
 
-  with open("detect-diff.csv", "w", newline="") as file:
-    writer = csv.writer(file)
-    writer.writerows(m_csv)
+  with open(morphs + "/detect-diff.csv", "w", newline="") as file1:
+    writer1 = csv.writer(file1)
+    writer1.writerows(diff_csv)
 
-
+  morph_csv.append([os.path.abspath(args["src"]), "bonafide"])
+  with open(morphs + "/detect-morph.csv", "w", newline="") as file2:
+    writer2 = csv.writer(file2)
+    writer2.writerows(morph_csv)
 
 
 if __name__ == "__main__":

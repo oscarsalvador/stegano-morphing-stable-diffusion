@@ -24,13 +24,16 @@ ITERATIONS=100
 #     --out morphing/$MORPH \
 #     --frames facemorph-frames \
 #     --morph $MORPH \
-#     --iterations $ITERATIONS"
+#     --iterations $ITERATIONS; \
+#     python /morphing/prepare_csvs.py \
+#       --src $SRC_IMG \
+#       --morphs /$FOLDER/morphing/"
 # done
 
-# rm -rf $FOLDER/diff_results
-# # positional args: src image, dir with the morphed images dirs, and output dir for results
-# docker compose run --rm detect-diff bash -c "/detect-diff/wrapper.sh \
-#   /$FOLDER/$SRC_IMG \
-#   /$FOLDER/morphing/ \
-#   /$FOLDER/diff_results"
+rm -rf $FOLDER/diff_results
+# positional args: src image, dir with the morphed images dirs, and output dir for results
 
+docker compose run --rm detect-diff bash -c "python main.py \
+  --data_dir /$FOLDER/morphing/ \
+  --out_dir /$FOLDER/diff_results \
+  --csv_file /$FOLDER/morphing/detect-diff.csv"

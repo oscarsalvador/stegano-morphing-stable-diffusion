@@ -87,22 +87,19 @@ services:
     image: neb-detect-diff
     volumes:
       - *shared
-      - ./code/detect-diff/:/detect-diff
-      - ./code/common/faceops.py/:/detect-diff/faceops.py
+      # - ./code/detect-diff/:/detect-diff
+    working_dir: /dmimagedetection
 
+  detect-morph:
+    <<: *common_config
+    build: 
+      context: ./detect-morph
+      dockerfile: Dockerfile
+    image: neb-morph-detect
+    volumes:
+      - *shared
+      - ./code/detect-morph:/detect-morph
 
-  # morph-detect:
-  # # docker compose build morph
-  # # docker compose run --rm morph bash
-  #   <<: *common_config
-  #   build: 
-  #     context: ./morph-detection
-  #     dockerfile: Dockerfile
-  #   image: neb-morph-detect
-  #   volumes:
-  #     - ./morph-detection:/morph-detection
-  #   # working_dir: /project/GANimageDetection/
-  #   # working_dir: /project/
 
   # arcfaces:
   #   <<: *common_config
