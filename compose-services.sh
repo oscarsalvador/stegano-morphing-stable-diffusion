@@ -15,7 +15,6 @@ ITERATIONS=100
 #   --background=transparent"
 
 
-# # python morpher.py --src full_img/source_image-0.jpg --dst full_img/destination_image-0.jpg --out here --frames frames --morph face --iterations 10
 # OPTIONS=("full" "head" "face")
 # for MORPH in "${OPTIONS[@]}"; do
 #   docker compose run --rm morph bash -c "python /morphing/morpher.py \
@@ -30,10 +29,11 @@ ITERATIONS=100
 #       --morphs /$FOLDER/morphing/"
 # done
 
-rm -rf $FOLDER/diff_results
-# positional args: src image, dir with the morphed images dirs, and output dir for results
 
-docker compose run --rm detect-diff bash -c "python main.py \
-  --data_dir /$FOLDER/morphing/ \
-  --out_dir /$FOLDER/diff_results \
-  --csv_file /$FOLDER/morphing/detect-diff.csv"
+# rm -rf $FOLDER/diff_results
+# docker compose run --rm detect-diff bash -c "python main.py \
+#   --data_dir /$FOLDER/morphing/ \
+#   --out_dir /$FOLDER/diff_results \
+#   --csv_file /$FOLDER/morphing/detect-diff.csv"
+
+

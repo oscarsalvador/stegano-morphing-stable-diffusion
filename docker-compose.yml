@@ -93,7 +93,7 @@ services:
   detect-morph:
     <<: *common_config
     build: 
-      context: ./detect-morph
+      context: .code/detect-morph
       dockerfile: Dockerfile
     image: neb-morph-detect
     volumes:
