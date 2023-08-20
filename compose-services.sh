@@ -5,6 +5,8 @@ ITERATIONS=100
 
 # docker compose build 
 
+
+
 # echo -e "\n\n\nFacemorpher generating frames"
 # rm -rf $FOLDER/facemorph-frames
 # docker compose run --rm facemorpher bash -c "facemorpher \
@@ -42,7 +44,12 @@ ITERATIONS=100
 
 # rm -rf $FOLDER/det_morph_results
 # docker compose run --rm detect-morph bash -c "/detect-morph/wrapper.sh \
-#   /$folder/morphing \
-#   /$folder/det_morph_results"
+#   /$FOLDER/morphing \
+#   /$FOLDER/det_morph_results"
 
 
+# mkdir $FOLDER/det_arcfaces
+# docker compose run --rm arcfaces bash -c "python /arcfaces/arcfaces.py \
+#   --people \"[['diffused', ['/$FOLDER/$SRC_IMG']], ['original', ['/$FOLDER/$DST_IMG']]]\" \
+#   --images_dir /$FOLDER/morphing/head \
+#   --out_dir /$FOLDER/det_arcfaces"

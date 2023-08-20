@@ -101,13 +101,15 @@ services:
       - ./code/detect-morph:/detect-morph
     working_dir: /SPL-MAD
     
+  arcfaces:
+    <<: *common_config
+    build: 
+      context: ./code/arcfaces
+      dockerfile: Dockerfile
+    image: neb-arcfaces
+    volumes:
+      - *shared
+      - ./code/arcfaces:/arcfaces
+    user: "0"
 
-
-  # arcfaces:
-  #   <<: *common_config
-  #   build: 
-  #     context: ./arcfaces
-  #     dockerfile: Dockerfile
-  #   image: neb-arcfaces
-  #   volumes:
-  #     - ./arcfaces:/arcfaces
+  
