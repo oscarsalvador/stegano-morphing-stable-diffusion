@@ -17,16 +17,18 @@ x-common_config: &common_config
 services:
   # docker compose build dreambooth
   # docker compose run --rm dreambooth bash
-  # dreambooth:
-  #   <<: *common_config
-  #   build: 
-  #     context: ./dreambooth
-  #     dockerfile: Dockerfile
-  #   image: neb-dreambooth
-  #   volumes:
-  #     - .env:/project/.env
-  #     - *dbooth
-  #   working_dir: /project
+  dreambooth:
+    <<: *common_config
+    build: 
+      context: ./code/dreambooth
+      dockerfile: Dockerfile
+    image: neb-dreambooth
+    volumes:
+      - *shared
+      - ./code/dreambooth
+      - ./code/common/faceops.py/:/project/dreambooth/faceops.py
+      - .env:/project/.env
+    working_dir: /project
 
   # download:
   #   build: stable-diffusion-ui/services/download/
