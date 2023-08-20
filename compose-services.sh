@@ -1,11 +1,31 @@
+# general
+FOLDER="project"
+
+# stable diffusion
+SUBJECT="PatricBateman"
+SUBJECT_CLASS="man"
+TRAINING_IMAGES_DIR="training"
+INSTANCE_DATA_DIR="/project/stable-diffusion/data/"
+OUTPUT_DIR="/project/stable-diffusion/output/"
+CLASS_DATA_DIR="/project/stable-diffusion/data/"
+
+# morphing
 SRC_IMG="src.jpg"
 DST_IMG="dst.jpg"
-FOLDER="project"
 ITERATIONS=100
+
 
 # docker compose build 
 
-
+# mkdir -p {$INSTANCE_DATA_DIR,$OUTPUT_DIR}
+docker compose run --rm dreambooth bash -c "/dreambooth/train.sh \
+  $SUBJECT \
+  $SUBJECT_CLASS \
+  $INSTANCE_DATA_DIR \
+  $OUTPUT_DIR \
+  $CLASS_DATA_DIR \
+  $TRAINING_IMAGES_DIR
+ "
 
 # echo -e "\n\n\nFacemorpher generating frames"
 # rm -rf $FOLDER/facemorph-frames

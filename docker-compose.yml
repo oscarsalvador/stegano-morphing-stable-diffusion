@@ -15,8 +15,6 @@ x-common_config: &common_config
             capabilities: [gpu]
 
 services:
-  # docker compose build dreambooth
-  # docker compose run --rm dreambooth bash
   dreambooth:
     <<: *common_config
     build: 
@@ -25,26 +23,10 @@ services:
     image: neb-dreambooth
     volumes:
       - *shared
-      - ./code/dreambooth
-      - ./code/common/faceops.py/:/project/dreambooth/faceops.py
-      - .env:/project/.env
-    working_dir: /project
-
-  # download:
-  #   build: stable-diffusion-ui/services/download/
-  #   profiles: ["download"]
-  #   volumes:
-  #     - *v1
-
-  # auto1111:
-  #   <<: *common_config
-  #   profiles: ["auto"]
-  #   build: stable-diffusion-ui/services/AUTOMATIC1111
-  #   image: sd-auto:62
-  #   ports:
-  #     - "${WEBUI_PORT:-7860}:7860"
-  #   environment:
-  #     - CLI_ARGS=--allow-code --medvram --xformers --enable-insecure-extension-access --api
+      - ./code/dreambooth/:/dreambooth/
+      - ./code/common/faceops.py/:/dreambooth/faceops.py
+      - ..env:/project/.env
+    user: "0"
 
   # imggen:
   # # docker compose build img2img
@@ -58,8 +40,6 @@ services:
   #     - .env:/project/.env
   #     - *imggen
   #   working_dir: /project
-
-
 
   facemorpher:
     <<: *common_config
@@ -79,7 +59,7 @@ services:
     volumes:
       - *shared
       - ./code/morphing/:/morphing
-      - ./code/common/faceops.py/:/morphing/faceops.py
+      - ./code/common/faceops.py/:/morphing/faceops.py    
 
   detect-diff:
     <<: *common_config

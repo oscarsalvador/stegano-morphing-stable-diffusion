@@ -1,25 +1,41 @@
-SUBJECT="arizwy"
-SUBJECT_CLASS="man"
-IMAGES_DIR="/project/images/Ari_Fleischer"
+SUBJECT=$1
+SUBJECT_CLASS=$2
+INSTANCE_DATA_DIR=$3
+OUTPUT_DIR=$4
+CLASS_DATA_DIR=$5
+TRAINING_IMAGES_DIR=$6
 MODEL_NAME="runwayml/stable-diffusion-v1-5"
 # MODEL_NAME="stabilityai/stable-diffusion-2-base"
 # MODEL_NAME="stabilityai/stable-diffusion-2-1"
-OUTPUT_DIR="/project/content/output"
 
-python prepare.py --subject $SUBJECT --subject_class $SUBJECT_CLASS 
-cp -r $IMAGES_DIR/* /project/content/data/$SUBJECT/
-python prepare.py --subject $SUBJECT --subject_class $SUBJECT_CLASS -p
+python /dreambooth/prepare.py \
+  --subject $SUBJECT \
+  --subject_class $SUBJECT_CLASS \
+  --instance_data_dir $INSTANCE_DATA_DIR \
+  --output_dir $OUTPUT_DIR \
+  --class_data_dir $CLASS_DATA_DIR
 
-pwd
+cp $TRAINING_IMAGES_DIR/* $INSTANCE_DATA_DIR$SUBJECT
 
-if [ ! -f train_dreambooth.py ]; then
-  # wget -q https://github.com/ShivamShrirao/diffusers/raw/main/examples/dreambooth/train_dreambooth.py
-  wget -q https://github.com/huggingface/diffusers/blob/main/examples/dreambooth/train_dreambooth.py
-fi
+python /dreambooth/prepare.py -p \
+  --subject $SUBJECT \
+  --subject_class $SUBJECT_CLASS \
+  --instance_data_dir $INSTANCE_DATA_DIR \
+  --output_dir $OUTPUT_DIR \
+  --class_data_dir $CLASS_DATA_DIR
 
-ls
+# script download now handled in dockerfile
+# if [ ! -f train_dreambooth.py ]; then
+#   # wget -q https://github.com/ShivamShrirao/diffusers/raw/main/examples/dreambooth/train_dreambooth.py
+#   wget -q https://github.com/huggingface/diffusers/blob/main/examples/dreambooth/train_dreambooth.py
+# # fi
 
-python3 train_dreambooth.py \
+WEIGHTS_DIR=$OUTPUT_DIR"800"
+CKPT_DIR="$WEIGHTS_DIR/$SUBJECT.ckpt"
+CONCEPTS_LIST_DIR=$(echo $INSTANCE_DATA_DIR | awk -v RS="data" 'NR==1{print}')
+CONCEPTS_LIST_PATH=$CONCEPTS_LIST_DIR"concepts_list.json"
+
+python3 /diffusers/train_dreambooth.py \
   --pretrained_model_name_or_path=$MODEL_NAME \
   --pretrained_vae_name_or_path="stabilityai/sd-vae-ft-mse" \
   --output_dir=$OUTPUT_DIR \
@@ -40,19 +56,21 @@ python3 train_dreambooth.py \
   --max_train_steps=800 \
   --save_interval=10000 \
   --save_sample_prompt="photo of $SUBJECT man" \
-  --concepts_list="/project/content/concepts_list.json"
+  --concepts_list=$CONCEPTS_LIST_PATH
 
 
+echo -e "\n\n\n"
 
-if [ ! -f convert_diffusers_to_original_stable_diffusion.py ]; then
-  wget -q https://github.com/ShivamShrirao/diffusers/raw/main/scripts/convert_diffusers_to_original_stable_diffusion.py
-fi
+# if [ ! -f convert_diffusers_to_original_stable_diffusion.py ]; then
+#   wget -q https://github.com/ShivamShrirao/diffusers/raw/main/scripts/convert_diffusers_to_original_stable_diffusion.py
+# fi
 
-WEIGHTS_DIR="$OUTPUT_DIR/800"
-CKPT_DIR="$WEIGHTS_DIR/$SUBJECT.ckpt"
+
 # --half => Whether to convert to fp16, takes half the space (2GB).
-
-python convert_diffusers_to_original_stable_diffusion.py --model_path $WEIGHTS_DIR  --checkpoint_path $CKPT_DIR --half
+python /diffusers/convert_diffusers_to_original_stable_diffusion.py \
+  --model_path $WEIGHTS_DIR \
+  --checkpoint_path $CKPT_DIR \
+  --half
 
 echo "MODEL SAVED AS A CKPT IN $CKPT_DIR"
 

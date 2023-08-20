@@ -26,13 +26,13 @@ parser.add_argument("--model_name", default="runwayml/stable-diffusion-v1-5",
 parser.add_argument("--subject_class", default="person",
   help="Subject's class"
 )
-parser.add_argument("--instance_data_dir", default="/project/content/data/",
+parser.add_argument("--instance_data_dir", default="/project/stable-diffusion/data/",
   help="Local dir with the training images of the subject"
 )
-parser.add_argument("--output_dir", default="/project/content/output",
+parser.add_argument("--output_dir", default="/project/stable-diffusion/output",
   help="Local dir where new model will be saved"
 )
-parser.add_argument("--class_data_dir", default="/project/content/data/",
+parser.add_argument("--class_data_dir", default="/project/stable-diffusion/data/",
   help="Local dir for images of the subject's class"
 )
 # boolean
@@ -99,12 +99,12 @@ def single_concept_json(args, concepts_list_path):
   instance_data_dir = args["instance_data_dir"]
   class_data_dir = args["class_data_dir"]
 
-  if args["instance_data_dir"] == "/project/content/data/":
+  if args["instance_data_dir"] == "/project/stable-diffusion/data/":
     instance_data_dir += args["subject"]
   # if images are to be preprocessed, they images to train will be in a /prep subdir
   if args["preprocess_images"]: 
     instance_data_dir += "/prep"
-  if args["class_data_dir"] == "/project/content/data/":
+  if args["class_data_dir"] == "/project/stable-diffusion/data/":
     class_data_dir += args["subject_class"]
 
   concepts_list = [
@@ -211,26 +211,33 @@ def crop_and_write(img, coords, side_len, dir):
 
 def main():
   # create ~/.huggingface/token and model output dir
-  hf_path  = str(Path.home()) + "/.huggingface"
+  hf_path  = str(Path.home()) + "/.cache/huggingface"
   os.makedirs(hf_path, exist_ok=True)  
 
   with open(hf_path + "/token", "w") as f:
     f.write(str(env_hf_token))
 
   os.makedirs(args["output_dir"], exist_ok=True)
-
+  
 
   # # find or create concepts_list.json
-  concepts_list_path = "content/concepts_list.json"
+  # concepts_list_path = "stable-diffusion/concepts_list.json"
+  tmp = args["instance_data_dir"]
+  if tmp[-1] != "/": tmp += "/"
+  concepts_list_path = tmp.split("/")[-3] + "/concepts_list.json"
+  write_concepts_json(args, concepts_list_path)
   write_concepts_json(args, concepts_list_path)
 
   # create instance_data_dir for every concept 
   image_dirs = []
   with open(concepts_list_path, "r") as f:
     for concept in json.load(f):
+      # print(concept)
       os.makedirs(concept["instance_data_dir"], exist_ok=True)
       dir = concept["instance_data_dir"].split("/prep")[0]
       image_dirs.append(dir)
+
+  # print(image_dirs)
 
 
   # preprocess images if so selected
@@ -239,6 +246,7 @@ def main():
     for d in image_dirs:
       print("  " + d) 
   else:
+
     for d in image_dirs:
       for i in os.listdir(d):
         full_path = os.path.join(d, i)

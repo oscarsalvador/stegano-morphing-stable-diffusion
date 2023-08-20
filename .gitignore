@@ -7,3 +7,7 @@ code/morphing/faceops.py
 code/detect-diff/__pycache__
 code/detect-diff/faceops.py
 code/detect-diff/wrapper.sh
+code/dreambooth/faceops.py
+code/dreambooth/DreamBooth_Stable_Diffusion.ipynb
+code/dreambooth/old
+.env
