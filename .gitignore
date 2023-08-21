@@ -10,4 +10,5 @@ code/detect-diff/wrapper.sh
 code/dreambooth/faceops.py
 code/dreambooth/DreamBooth_Stable_Diffusion.ipynb
 code/dreambooth/old
+code/dreambooth2
 .env

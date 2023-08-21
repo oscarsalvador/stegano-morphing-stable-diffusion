@@ -4,6 +4,7 @@ INSTANCE_DATA_DIR=$3
 OUTPUT_DIR=$4
 CLASS_DATA_DIR=$5
 TRAINING_IMAGES_DIR=$6
+WEIGHTS_DIR=$7
 MODEL_NAME="runwayml/stable-diffusion-v1-5"
 # MODEL_NAME="stabilityai/stable-diffusion-2-base"
 # MODEL_NAME="stabilityai/stable-diffusion-2-1"
@@ -30,7 +31,7 @@ python /dreambooth/prepare.py -p \
 #   wget -q https://github.com/huggingface/diffusers/blob/main/examples/dreambooth/train_dreambooth.py
 # # fi
 
-WEIGHTS_DIR=$OUTPUT_DIR"800"
+# WEIGHTS_DIR=$OUTPUT_DIR"800"
 CKPT_DIR="$WEIGHTS_DIR/$SUBJECT.ckpt"
 CONCEPTS_LIST_DIR=$(echo $INSTANCE_DATA_DIR | awk -v RS="data" 'NR==1{print}')
 CONCEPTS_LIST_PATH=$CONCEPTS_LIST_DIR"concepts_list.json"

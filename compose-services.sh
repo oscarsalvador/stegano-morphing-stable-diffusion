@@ -6,8 +6,15 @@ SUBJECT="PatricBateman"
 SUBJECT_CLASS="man"
 TRAINING_IMAGES_DIR="training"
 INSTANCE_DATA_DIR="/project/stable-diffusion/data/"
-OUTPUT_DIR="/project/stable-diffusion/output/"
 CLASS_DATA_DIR="/project/stable-diffusion/data/"
+OUTPUT_DIR="/project/stable-diffusion/output/"
+WEIGHTS_DIR=$OUTPUT_DIR$SUBJECT
+
+# image generation
+MODEL_ID_OR_PATH=$OUTPUT_DIR"800/"
+# online pretrained models (v1.5 compatible) could be used instead
+# MODEL_ID_OR_PATH="runwayml/stable-diffusion-v1-5"
+IMG_GEN_OUT_DIR="img-gen"
 
 # morphing
 SRC_IMG="src.jpg"
@@ -17,15 +24,39 @@ ITERATIONS=100
 
 # docker compose build 
 
-# mkdir -p {$INSTANCE_DATA_DIR,$OUTPUT_DIR}
-docker compose run --rm dreambooth bash -c "/dreambooth/train.sh \
-  $SUBJECT \
-  $SUBJECT_CLASS \
-  $INSTANCE_DATA_DIR \
-  $OUTPUT_DIR \
-  $CLASS_DATA_DIR \
-  $TRAINING_IMAGES_DIR
- "
+# docker compose run --rm dreambooth bash -c "/dreambooth/train.sh \
+#   $SUBJECT \
+#   $SUBJECT_CLASS \
+#   $INSTANCE_DATA_DIR \
+#   $OUTPUT_DIR \
+#   $CLASS_DATA_DIR \
+#   $TRAINING_IMAGES_DIR \
+#   $WEIGHTS_DIR"
+
+# docker compose run --rm img-gen bash -c "python /img-gen/img2img.py"
+
+mkdir $FOLDER"/"$IMG_GEN_OUT_DIR
+# OPTIONS=("text2img", "img2img")
+# for GENERATOR in "${OPTIONS[@]}"; do
+#   docker compose run --rm img-gen bash -c "python /img-gen/handler.py \
+#     --model_id_or_path $MODEL_ID_OR_PATH \
+#     --prompt \"photo of $SUBJECT\" \
+#     --ref_img $DST_IMG \
+#     --out_dir /$FOLDER/$IMG_GEN_OUT_DIR/ \
+#     --generator $GENERATOR"
+# done
+# docker compose run --rm img-gen bash -c "python /img-gen/handler.py \
+#     --model_id_or_path runwayml/stable-diffusion-inpainting \
+#     --prompt \"photo of $SUBJECT\" \
+#     --ref_img $DST_IMG \
+#     --out_dir /$FOLDER/$IMG_GEN_OUT_DIR/ \
+#     --generator inpaint"
+docker compose run --rm img-gen bash -c "python /img-gen/handler.py \
+  --model_id_or_path $MODEL_ID_OR_PATH \
+  --prompt \"photo of $SUBJECT\" \
+  --ref_img $DST_IMG \
+  --out_dir /$FOLDER/$IMG_GEN_OUT_DIR/ \
+  --generator controlnet"
 
 # echo -e "\n\n\nFacemorpher generating frames"
 # rm -rf $FOLDER/facemorph-frames

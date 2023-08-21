@@ -28,18 +28,17 @@ services:
       - ..env:/project/.env
     user: "0"
 
-  # imggen:
-  # # docker compose build img2img
-  # # docker compose run --rm img2img bash
-  #   <<: *common_config
-  #   build: 
-  #     context: ./img2img
-  #     dockerfile: Dockerfile
-  #   image: neb-img2img
-  #   volumes:
-  #     - .env:/project/.env
-  #     - *imggen
-  #   working_dir: /project
+  img-gen:
+    <<: *common_config
+    build: 
+      context: ./code/img-gen
+      dockerfile: Dockerfile
+    image: neb-img-gen
+    volumes:
+      - *shared
+      - ./code/img-gen/:/img-gen/
+    user: "0"
+
 
   facemorpher:
     <<: *common_config
