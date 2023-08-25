@@ -10,5 +10,10 @@ code/detect-diff/wrapper.sh
 code/dreambooth/faceops.py
 code/dreambooth/DreamBooth_Stable_Diffusion.ipynb
 code/dreambooth/old
-code/dreambooth2
+code/dreambooth/train_inpainting_dreambooth.py
 .env
+project_n
+code/img-gen/img2img.py
+code/img-gen/inpaint.py
+code/img-gen/openpose2.py
+code/img-gen/text2img.py

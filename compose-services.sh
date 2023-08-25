@@ -8,7 +8,14 @@ TRAINING_IMAGES_DIR="training"
 INSTANCE_DATA_DIR="/project/stable-diffusion/data/"
 CLASS_DATA_DIR="/project/stable-diffusion/data/"
 OUTPUT_DIR="/project/stable-diffusion/output/"
-WEIGHTS_DIR=$OUTPUT_DIR$SUBJECT
+# WEIGHTS_DIR=$OUTPUT_DIR$SUBJECT
+declare -A MODEL_WEIGHT_PAIRS
+# MODEL_WEIGHT_PAIRS["base"]="runwayml/stable-diffusion-v1-5"
+# MODEL_WEIGHT_PAIRS["inpaint"]="runwayml/stable-diffusion-inpainting"
+MODEL_WEIGHT_PAIRS="{ \
+  \\\"base\\\": \\\"runwayml/stable-diffusion-v1-5\\\", \
+  \\\"inpaint\\\": \\\"runwayml/stable-diffusion-inpainting\\\" \
+}"
 
 # image generation
 MODEL_ID_OR_PATH=$OUTPUT_DIR"800/"
@@ -24,6 +31,8 @@ ITERATIONS=100
 
 # docker compose build 
 
+
+# echo $MODEL_WEIGHT_PAIRS
 # docker compose run --rm dreambooth bash -c "/dreambooth/train.sh \
 #   $SUBJECT \
 #   $SUBJECT_CLASS \
@@ -31,12 +40,17 @@ ITERATIONS=100
 #   $OUTPUT_DIR \
 #   $CLASS_DATA_DIR \
 #   $TRAINING_IMAGES_DIR \
-#   $WEIGHTS_DIR"
+#   $MODEL_WEIGHT_PAIRS"
+
+MODEL_WEIGHT_PAIRS=$(echo $MODEL_WEIGHT_PAIRS | sed 's/\\"/"/g')
+echo $MODEL_WEIGHT_PAIRS
+
 
 # docker compose run --rm img-gen bash -c "python /img-gen/img2img.py"
 
 mkdir $FOLDER"/"$IMG_GEN_OUT_DIR
-# OPTIONS=("text2img", "img2img")
+# OPTIONS=("text2img", "img2img" "controlnet")
+# OPTIONS=("controlnet")
 # for GENERATOR in "${OPTIONS[@]}"; do
 #   docker compose run --rm img-gen bash -c "python /img-gen/handler.py \
 #     --model_id_or_path $MODEL_ID_OR_PATH \
@@ -46,17 +60,25 @@ mkdir $FOLDER"/"$IMG_GEN_OUT_DIR
 #     --generator $GENERATOR"
 # done
 # docker compose run --rm img-gen bash -c "python /img-gen/handler.py \
-#     --model_id_or_path runwayml/stable-diffusion-inpainting \
+#     --model_id_or_path $MODEL_ID_OR_PATH \
 #     --prompt \"photo of $SUBJECT\" \
 #     --ref_img $DST_IMG \
 #     --out_dir /$FOLDER/$IMG_GEN_OUT_DIR/ \
 #     --generator inpaint"
 docker compose run --rm img-gen bash -c "python /img-gen/handler.py \
-  --model_id_or_path $MODEL_ID_OR_PATH \
-  --prompt \"photo of $SUBJECT\" \
-  --ref_img $DST_IMG \
-  --out_dir /$FOLDER/$IMG_GEN_OUT_DIR/ \
-  --generator controlnet"
+    --model_id_or_path runwayml/stable-diffusion-inpainting \
+    --prompt \"photo of Tom Cruise\" \
+    --ref_img $DST_IMG \
+    --out_dir /$FOLDER/$IMG_GEN_OUT_DIR/ \
+    --generator inpaint \
+    --tries 5"
+  
+# docker compose run --rm img-gen bash -c "python /img-gen/handler.py \
+#   --model_id_or_path $MODEL_ID_OR_PATH \
+#   --prompt \"photo of $SUBJECT\" \
+#   --ref_img $DST_IMG \
+#   --out_dir /$FOLDER/$IMG_GEN_OUT_DIR/ \
+#   --generator controlnet"
 
 # echo -e "\n\n\nFacemorpher generating frames"
 # rm -rf $FOLDER/facemorph-frames

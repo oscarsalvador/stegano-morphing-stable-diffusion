@@ -27,7 +27,9 @@ parser.add_argument("--generator", required=True,
   choices=["text2img", "img2img", "inpaint", "controlnet"],
   help="Way to use stable diffusion"
 )
-
+parser.add_argument("--tries", default=1, type=int,
+  help="How many images to generate for the given parameters"
+)
 
 
 def text2img(model_id_or_path, prompt, output_img_path):
@@ -85,6 +87,7 @@ def inpaint(model_id_or_path, input_img_path, mask_path, prompt, output_img_path
 
 def controlnet(model_id_or_path, input_img_path, prompt, output_img_path):
   openpose = OpenposeDetector.from_pretrained("lllyasviel/ControlNet")
+  # openpose = OpenposeDetector.from_pretrained("lllyasviel/openpose_face")
 
   init_image = load_image(input_img_path)
   openpose_image = openpose(init_image)
@@ -99,6 +102,9 @@ def controlnet(model_id_or_path, input_img_path, prompt, output_img_path):
     controlnet=controlnet,
     local_files_only=True
   )
+  controlnet_pipe.scheduler = UniPCMultistepScheduler.from_config(controlnet_pipe.scheduler.config)
+  controlnet_pipe.enable_xformers_memory_efficient_attention()
+  controlnet_pipe.enable_model_cpu_offload()
 
   controlnet_image = controlnet_pipe(
     prompt, 
@@ -115,21 +121,22 @@ def main():
 
   print(args)
 
-  # save by timestamp, for one by one testing
-  now = datetime.now().strftime("_%Y-%m-%d_%H:%M:%S.%f_")
-  output_img_path = args["out_dir"] + args["generator"] +  now + ".png"
-  
-  if args["generator"] == "text2img":
-    text2img(args["model_id_or_path"], args["prompt"], output_img_path)
+  for i in range(0,args["tries"]):
+    # save by timestamp, for one by one testing
+    now = datetime.now().strftime("_%Y-%m-%d_%H:%M:%S.%f_")
+    output_img_path = args["out_dir"] + args["generator"] +  now + ".png"
+    
+    if args["generator"] == "text2img":
+      text2img(args["model_id_or_path"], args["prompt"], output_img_path)
 
-  if args["generator"] == "img2img":
-    img2img(args["model_id_or_path"], args["ref_img"], args["prompt"], output_img_path)
-  
-  if args["generator"] == "inpaint":
-    inpaint(args["model_id_or_path"], args["ref_img"], "/project/masktest2.png", args["prompt"], output_img_path)
+    if args["generator"] == "img2img":
+      img2img(args["model_id_or_path"], args["ref_img"], args["prompt"], output_img_path)
+    
+    if args["generator"] == "inpaint":
+      inpaint(args["model_id_or_path"], args["ref_img"], "/project/masktest2.png", args["prompt"], output_img_path)
 
-  if args["generator"] == "controlnet":
-    controlnet(args["model_id_or_path"], args["ref_img"], args["prompt"], output_img_path)
+    if args["generator"] == "controlnet":
+      controlnet(args["model_id_or_path"], args["ref_img"], args["prompt"], output_img_path)
 
 
 if __name__ == "__main__":
