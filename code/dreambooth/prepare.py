@@ -6,9 +6,11 @@ from dotenv import load_dotenv
 
 import json
 
-
 import random
 import time
+
+import faceops
+
 
 load_dotenv()
 env_hf_token = os.getenv("HUGGINGFACE_TOKEN")
@@ -142,57 +144,6 @@ def replace_background(img):
     
 
 
-
-def find_face(img, highlight):
-  face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_alt2.xml')
-  faces = face_cascade.detectMultiScale(img, scaleFactor=1.1, minNeighbors=5)
-
-  if highlight:
-    for (x, y, w, h) in faces:
-      cv2.rectangle(img, (x, y), (x+w, y+h), (0, 255, 0), 3)
-      cv2.putText(img, 'Face detected', (x+10, y+60), cv2.FONT_HERSHEY_SIMPLEX, 2, (0, 255, 0), 3)
-
-  print("Detected faces", faces)
-
-  biggest_detection = []
-  detection_size = 0
-  for face in faces:
-    size = face[2] * face[3]
-    if size > detection_size:
-      detection_size = size
-      biggest_detection = face
-
-  print("Biggest area", biggest_detection)
-    
-  return biggest_detection
-
-
-
-
-def zoom_out(img, face_rectangle, zoom_out, highlight):
-  square_side = max(face_rectangle[2:3])
-  zoom_pixels = square_side * (zoom_out/2)
-
-  for coords in [0,1]:
-    face_rectangle[coords] -= zoom_pixels
-    if face_rectangle[coords] < 0: face_rectangle[coords] = 0
-
-  for side in [2,3]:
-    # by removing zoom_pixels from the start coords, the square is mooved to the top left, and now must be compensated
-    face_rectangle[side] += zoom_pixels*2  
-
-  print("Zoom out", zoom_out)
-  print("Zoomed out", face_rectangle)
-  if highlight:
-    for (x, y, w, h) in [face_rectangle]:
-      cv2.rectangle(img, (x, y), (x+w, y+h), (0, 0, 255), 3)
-      cv2.putText(img, 'Zoom out', (x+10, y+60), cv2.FONT_HERSHEY_SIMPLEX, 2, (0, 0, 255), 3)
-
-  return face_rectangle
-
-
-
-
 def crop_and_write(img, coords, side_len, dir):
   (x, y, w, h) = coords
   cropped_img = img[y:y+h, x:x+w]
@@ -260,9 +211,9 @@ def main():
               img = Image.open(full_path)
               clean_background = replace_background(img)
 
-              face_rectangle = find_face(clean_background, args["highlight"])
+              face_rectangle = faceops.find_face(clean_background, args["highlight"])
 
-              new_rectangle = zoom_out(
+              new_rectangle = faceops.zoom(
                 clean_background, 
                 face_rectangle, 
                 args["zoom_percentage"], 

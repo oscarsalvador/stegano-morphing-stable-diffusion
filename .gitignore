@@ -1,7 +1,6 @@
 documentacion/definicion-proyecto.md
 reconocimiento
 nvidia-docker
-project
 code/morphing/__pycache__
 code/morphing/faceops.py
 code/detect-diff/__pycache__
@@ -12,8 +11,13 @@ code/dreambooth/DreamBooth_Stable_Diffusion.ipynb
 code/dreambooth/old
 code/dreambooth/train_inpainting_dreambooth.py
 .env
-project_n
 code/img-gen/img2img.py
 code/img-gen/inpaint.py
 code/img-gen/openpose2.py
 code/img-gen/text2img.py
+documentacion/drawio/.xdp*
+project*
+documentacion/drawio
+**__pycache__
+code/img-gen/tests
+code/arcfaces/*.jpg
