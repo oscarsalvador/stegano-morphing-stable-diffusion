@@ -10,21 +10,21 @@ MODEL_NAME=$7
 # echo $@
 
 
-# python /dreambooth/prepare.py \
-#   --subject $SUBJECT \
-#   --subject_class $SUBJECT_CLASS \
-#   --instance_data_dir $INSTANCE_DATA_DIR \
-#   --output_dir $OUTPUT_DIR \
-#   --class_data_dir $CLASS_DATA_DIR
+python /dreambooth/prepare.py \
+  --subject $SUBJECT \
+  --subject_class $SUBJECT_CLASS \
+  --instance_data_dir $INSTANCE_DATA_DIR \
+  --output_dir $OUTPUT_DIR \
+  --class_data_dir $CLASS_DATA_DIR
 
-# cp $TRAINING_IMAGES_DIR/* $INSTANCE_DATA_DIR$SUBJECT
+cp $TRAINING_IMAGES_DIR/* $INSTANCE_DATA_DIR$SUBJECT
 
-# python /dreambooth/prepare.py -p \
-#   --subject $SUBJECT \
-#   --subject_class $SUBJECT_CLASS \
-#   --instance_data_dir $INSTANCE_DATA_DIR \
-#   --output_dir $OUTPUT_DIR \
-#   --class_data_dir $CLASS_DATA_DIR
+python /dreambooth/prepare.py -p \
+  --subject $SUBJECT \
+  --subject_class $SUBJECT_CLASS \
+  --instance_data_dir $INSTANCE_DATA_DIR \
+  --output_dir $OUTPUT_DIR \
+  --class_data_dir $CLASS_DATA_DIR
 
 
 
