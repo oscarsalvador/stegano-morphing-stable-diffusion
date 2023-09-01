@@ -10,8 +10,8 @@ def headmorph(src_path, dst_path, out_path, iterations):
   src_name = ".".join(src_name.split(".")[:-1])
   src_extension = "." + src_path.split(".")[-1]
 
-  src = cv2.imread(src_path)
-  dst = cv2.imread(dst_path)
+  src = cv2.imread(dst_path)
+  dst = cv2.imread(src_path)
   # safety resize
   h,w,c = src.shape
   dst = cv2.resize(dst, (w,h))
