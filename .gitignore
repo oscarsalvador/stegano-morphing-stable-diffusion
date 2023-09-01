@@ -25,5 +25,5 @@ experiments/handpicked.json
 experiments/*/
 # !experiments/real-actors
 experiment*
-!experiment-1.sh
+experiment-2.sh
 documentacion/*.md

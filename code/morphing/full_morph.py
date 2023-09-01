@@ -18,8 +18,7 @@ def fullmorph(src_path, dst_path, out_path, iterations):
   else:
     dst = Image.open(dst_path)
 
-  # originally to guarantee that both have the same size, now abstracted outside
-  # src = src.resize(dst.size, Image.BILINEAR)
+  src = src.resize(dst.size, Image.BILINEAR)
 
   for i in range(1, iterations):
     alpha_p = i/iterations
