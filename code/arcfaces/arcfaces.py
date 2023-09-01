@@ -48,8 +48,8 @@ def main():
   
   people = ast.literal_eval(args["people"])
 
-  best_match_csv = [["Scanned image", "Detected person", "Verified", "Distance", "Threshold"]]
-  detailed_csv = [["Scanned image", "Detected person", "Verified", "Distance", "Threshold"]]
+  best_match_csv = [["Scanned image", "Detected person", "Person image", "Verified", "Distance", "Threshold"]]
+  detailed_csv = [["Scanned image", "Detected person", "Person image", "Verified", "Distance", "Threshold"]]
   for i in sorted(os.listdir(images_dir)):
     best_distance = 1000
     best_result = None
@@ -60,7 +60,8 @@ def main():
         result = DeepFace.verify(
           img1_path = images_dir + i, 
           img2_path = photo, 
-          model_name="ArcFace"
+          model_name="ArcFace",
+          enforce_detection=False
         )
 
         if result["distance"] < best_distance:

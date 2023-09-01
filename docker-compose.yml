@@ -37,6 +37,9 @@ services:
     volumes:
       - *shared
       - ./code/img-gen/:/img-gen/
+      - ./code/experiments:/experiments-code
+      - ./experiments:/experiments
+
     user: "0"
 
 
@@ -48,6 +51,8 @@ services:
     image: neb-facemorpher
     volumes:
       - *shared
+      - ./experiments/:/experiments/
+
 
   morph:
     <<: *common_config
@@ -59,6 +64,11 @@ services:
       - *shared
       - ./code/morphing/:/morphing
       - ./code/common/faceops.py/:/morphing/faceops.py    
+      - ./experiments/:/experiments/
+      - ./code/experiments:/experiments-code
+
+
+
 
   detect-diff:
     <<: *common_config
@@ -69,7 +79,9 @@ services:
     volumes:
       - *shared
       # - ./code/detect-diff/:/detect-diff
+      - ./experiments/:/experiments/
     working_dir: /dmimagedetection
+    user: "0"
 
   detect-morph:
     <<: *common_config
@@ -91,6 +103,15 @@ services:
     volumes:
       - *shared
       - ./code/arcfaces:/arcfaces
+      - ./experiments/:/experiments/
     user: "0"
 
-  
+  eval:
+    <<: *common_config
+    image: neb-morph
+    volumes:
+      - *shared
+      - ./code/experiments:/experiments-code
+      - ./code/common/faceops.py/:/experiments-code/faceops.py    
+      - ./experiments/:/experiments/
+    working_dir: /experiments

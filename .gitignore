@@ -17,7 +17,13 @@ code/img-gen/openpose2.py
 code/img-gen/text2img.py
 documentacion/drawio/.xdp*
 project*
-documentacion/drawio
+documentacion/drawio/caras*
 **__pycache__
 code/img-gen/tests
 code/arcfaces/*.jpg
+experiments/handpicked.json
+experiments/*/
+# !experiments/real-actors
+experiment*
+documentacion/*.md
+documentacion
