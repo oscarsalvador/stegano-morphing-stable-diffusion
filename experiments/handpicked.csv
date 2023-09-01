@@ -1,0 +1,17 @@
+Identifier, Reference path, Diffusion path
+christian-mountain,real-references/mountain2.png,sd-actors-handpicked/christian-mountain.png
+christian-office, real-references/office1.png, sd-actors2/img2img_2023-09-01_00:22:34.890939_.png
+christian-street, real-references/street1.png, sd-actors2/img2img_2023-09-01_00:28:25.263298_.png
+mads-mountain, real-references/mountain2.png, sd-actors-handpicked/mads-mountain.png
+mads-office, real-references/office1.png, sd-actors-handpicked/mads-office.png
+mads-street, real-references/street1.png, sd-actors/img2img_2023-08-31_17:16:42.192361_.png
+ryan-mountain, real-references/mountain2.png, sd-actors-handpicked/ryan-mountain.png
+ryan-office, real-references/office1.png, sd-actors-handpicked/ryan-office.png
+ryan-street, real-references/street1.png, sd-actors2/img2img_2023-09-01_01:01:07.671053_.png
+tom-mountain, real-references/mountain1.png, sd-actors-handpicked/tom-mountain.png
+tom-office, real-references/office1.png, sd-actors/img2img_2023-08-31_17:01:04.398654_.png
+tom-street, real-references/street1.png, sd-actors2/img2img_2023-09-01_01:13:46.361430_.png
+oscar-mountain, real-references/mountain2.png, sd-subject/img2img_2023-08-31_15:25:38.992935_.png
+oscar-office, real-references/office1.png, sd-subject-handpicked/img2img_2023-08-31_15:28:16.036987_.png
+oscar-street, real-references/street1.png, sd-subject/img2img_2023-08-31_15:34:11.549451_.png
+

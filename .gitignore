@@ -24,6 +24,6 @@ code/arcfaces/*.jpg
 experiments/handpicked.json
 experiments/*/
 # !experiments/real-actors
-experiment*
+experiment/
 experiment-2.sh
 documentacion/*.md
