@@ -12,6 +12,9 @@ def headmorph(src_path, dst_path, out_path, iterations):
 
   src = cv2.imread(src_path)
   dst = cv2.imread(dst_path)
+  # safety resize
+  h,w,c = src.shape
+  dst = cv2.resize(dst, (w,h))
 
   # get coords of face in src
   x,y,h,w = faceops.find_face(src, False)
