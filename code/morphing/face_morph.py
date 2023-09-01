@@ -64,28 +64,64 @@ def find_subimage(image, subimg):
 
 def get_frame_coords(dst_path, last_frame):
   # the last frame is the closest to the dst image
+  print("dst_path", dst_path)
+
   frame = cv2.imread(last_frame)
   dst = cv2.imread(dst_path)
 
-  eyes_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_righteye_2splits.xml')
-  frame_eyes = eyes_cascade.detectMultiScale(frame, scaleFactor=1.1, minNeighbors=5)
-  dst_eyes = eyes_cascade.detectMultiScale(dst, scaleFactor=1.1, minNeighbors=5)
 
-  # print(frame_eyes)
+
+  # using the face is less precise, i leave it for correction and backup in case eye distance fails
+  frame_face_rectangle = faceops.find_face(frame, False)
+  dst_face_rectangle = faceops.find_face(dst, False)
+
+  # cv2.imwrite("here/original.png", dst)
+  print("\nFace in original image", dst_face_rectangle)
+
+  fratio = frame_face_rectangle / dst_face_rectangle
+  print("Subimg/original ratio", fratio)
+
+  fxf,fyf,fwf,fhf = frame_face_rectangle
+  fxd,fyd,fwd,fhd = dst_face_rectangle
+
+  # face in resized frame
+  fx1 = fxf/fratio[2]
+  fy1 = fyf/fratio[3]
+
+  # resized frame in original
+  fx2 = int(fxd - fx1)
+  fy2 = int(fyd - fy1)
+
+
+
+  right_eyes_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_righteye_2splits.xml')
+  right_frame_eyes = right_eyes_cascade.detectMultiScale(frame, scaleFactor=1.1, minNeighbors=5)
+  right_dst_eyes = right_eyes_cascade.detectMultiScale(dst, scaleFactor=1.1, minNeighbors=5)
+
+  left_eyes_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_lefteye_2splits.xml')
+  left_frame_eyes = left_eyes_cascade.detectMultiScale(frame, scaleFactor=1.1, minNeighbors=5)
+  left_dst_eyes = left_eyes_cascade.detectMultiScale(dst, scaleFactor=1.1, minNeighbors=5)
+
+  if len(right_frame_eyes) < 1 or len(right_dst_eyes) < 1 or  len(left_frame_eyes) < 1 or len(left_dst_eyes) < 1:
+    print("Backup method: find subimage")
+    return fx2,fy2,fratio[2]
+    
+
+  print(right_frame_eyes)
+  print(left_frame_eyes)
   # print(dst_eyes)
   # print()
-  frame_eyedist = (frame_eyes[1][0] + frame_eyes[1][2]) - frame_eyes[0][0]
-  dst_eyedist = (dst_eyes[1][0] + dst_eyes[1][2]) - dst_eyes[0][0]
-  # print(frame_eyedist)
-  # print(dst_eyedist)
-  # print()
+
+  frame_eyedist = (left_frame_eyes[0][0] + left_frame_eyes[0][2]) - right_frame_eyes[0][0]
+  dst_eyedist = (left_dst_eyes[0][0] + left_dst_eyes[0][2]) - right_dst_eyes[0][0]
+
   ratio = frame_eyedist / dst_eyedist
   print(ratio)
 
   resized_frame = cv2.resize(frame, (0,0), fx=ratio, fy=ratio)
 
-  xf,yf,wf,hf = frame_eyes[0]
-  xd,yd,wd,hd = dst_eyes[0]
+  xf,yf,wf,hf = right_frame_eyes[0]
+  xd,yd,wd,hd = right_dst_eyes[0]
 
   print("frameeyes", xf, yf)
   print("dsteyes", xd, yd)
@@ -101,28 +137,13 @@ def get_frame_coords(dst_path, last_frame):
   y2 = int(yd - y1)
 
   print("2", x2, y2)
-  # exit()
-  # facemorphed images have a different size from the originals, 
-  # to perform a subimage search, it has to be resized.
-  # To resize, the ratio has to be calculated
 
-  # original_face_rectangle = faceops.find_face(dst, True)
-  # cv2.imwrite("here/original.png", dst)
-  # print("\nFace in original image", original_face_rectangle)
 
-  # ratio = frame_face_rectangle / original_face_rectangle
-  # print("Subimg/original ratio", ratio)
-  # nose_img = cv2.resize(nose_img, (0,0), fx=ratio[2], fy=ratio[3])
-  
-  # nose_start_corner = find_subimage(dst, nose_img)
+  # check error between the methods
+  if abs(fratio[2] - ratio) > 0.1:
+    return fx2,fy2,fratio[2]
 
-  # nose in resized frame
-  # x1 = x * ratio[2]
-  # y1 = y * ratio[3]
 
-  # frame in original
-  # x2 = int(nose_start_corner[0] - x1)
-  # y2 = int(nose_start_corner[1] - y1)
 
   print("Coords of frame in original", x2, y2)
   return x2,y2,ratio
@@ -130,7 +151,6 @@ def get_frame_coords(dst_path, last_frame):
 
 
 def facemorph(src_path, dst_path, out_path, frames_dir, iterations, correction):
-
   frames = sorted(os.listdir(frames_dir))
   last_frame = frames_dir + frames[-1]
 
@@ -141,8 +161,11 @@ def facemorph(src_path, dst_path, out_path, frames_dir, iterations, correction):
   src_name = ".".join(src_name.split(".")[:-1])
   src_extension = "." + src_path.split(".")[-1]
 
+  # src = Image.open(src_path)
+  original = Image.open(src_path)
+  # original.resize(src.size, Image.BILINEAR)
+
   # for every facemorph frame, create a new image pasting the frame on top of dst 
-  original = Image.open(dst_path)
   for frame in frames:
     percentage = frames.index(frame)/len(frames)
 
