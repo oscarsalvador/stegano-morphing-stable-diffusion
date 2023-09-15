@@ -66,7 +66,7 @@ def main():
     # condicion falsa, no tiene morphing
     else:
       # predictor dice que no tiene
-      if row[1] == "bonafide":
+      if not row[2]:
         true_negatives += 1
       else:
         false_positives += 1
