@@ -22,7 +22,7 @@ documentacion/drawio/caras*
 code/img-gen/tests
 code/arcfaces/*.jpg
 experiments/handpicked.json
-experiments/*/
+experiments
 # !experiments/real-actors
 experiment/
 experiment-2.sh
