@@ -28,93 +28,93 @@ DST_IMG="dst.jpg"
 ITERATIONS=100
 
 
-# docker compose build 
+docker compose build 
 
 
-# echo $MODEL_WEIGHT_PAIRS
-# docker compose run --rm dreambooth bash -c "/dreambooth/train.sh \
-#   $SUBJECT \
-#   $SUBJECT_CLASS \
-#   $INSTANCE_DATA_DIR \
-#   $OUTPUT_DIR \
-#   $CLASS_DATA_DIR \
-#   $TRAINING_IMAGES_DIR \
-#   $MODEL_NAME" 
+echo $MODEL_WEIGHT_PAIRS
+docker compose run --rm dreambooth bash -c "/dreambooth/train.sh \
+  $SUBJECT \
+  $SUBJECT_CLASS \
+  $INSTANCE_DATA_DIR \
+  $OUTPUT_DIR \
+  $CLASS_DATA_DIR \
+  $TRAINING_IMAGES_DIR \
+  $MODEL_NAME" 
 
-# MODEL_WEIGHT_PAIRS=$(echo $MODEL_WEIGHT_PAIRS | sed 's/\\"/"/g')
-# echo $MODEL_WEIGHT_PAIRS
+MODEL_WEIGHT_PAIRS=$(echo $MODEL_WEIGHT_PAIRS | sed 's/\\"/"/g')
+echo $MODEL_WEIGHT_PAIRS
 
 
 
-# mkdir $FOLDER"/"$IMG_GEN_OUT_DIR
-# # OPTIONS=("text2img", "img2img" "controlnet")
-# OPTIONS=("img2img" "controlnet")
-# for GENERATOR in "${OPTIONS[@]}"; do
-#   docker compose run --rm img-gen bash -c "python /img-gen/handler.py \
-#     --model_id_or_path $MODEL_ID_OR_PATH \
-#     --prompt \"photo of $SUBJECT\" \
-#     --ref_img $DST_IMG \
-#     --out_dir /$FOLDER/$IMG_GEN_OUT_DIR/ \
-#     --generator $GENERATOR \
-#     --tries 5"
-# done
-# docker compose run --rm img-gen bash -c "python /img-gen/handler.py \
-#     --model_id_or_path runwayml/stable-diffusion-inpainting \
-#     --prompt \"photo of $SUBJECT\" \
-#     --ref_img $DST_IMG \
-#     --out_dir /$FOLDER/$IMG_GEN_OUT_DIR/ \
-#     --generator inpaint"
+mkdir $FOLDER"/"$IMG_GEN_OUT_DIR
+# OPTIONS=("text2img", "img2img" "controlnet")
+OPTIONS=("img2img" "controlnet")
+for GENERATOR in "${OPTIONS[@]}"; do
+  docker compose run --rm img-gen bash -c "python /img-gen/handler.py \
+    --model_id_or_path $MODEL_ID_OR_PATH \
+    --prompt \"photo of $SUBJECT\" \
+    --ref_img $DST_IMG \
+    --out_dir /$FOLDER/$IMG_GEN_OUT_DIR/ \
+    --generator $GENERATOR \
+    --tries 5"
+done
+docker compose run --rm img-gen bash -c "python /img-gen/handler.py \
+    --model_id_or_path runwayml/stable-diffusion-inpainting \
+    --prompt \"photo of $SUBJECT\" \
+    --ref_img $DST_IMG \
+    --out_dir /$FOLDER/$IMG_GEN_OUT_DIR/ \
+    --generator inpaint"
 
 
 echo -e "\n\n\nType enter once the generated image of your choosing has been placed in $FOLDER with the name $DST_IMG"
 read
 
 
-# echo -e "\n\n\nFacemorpher generating frames"
-# rm -rf $FOLDER/facemorph-frames
-# docker compose run --rm facemorpher bash -c "facemorpher \
-#   --src $SRC_IMG \
-#   --dest $DST_IMG \
-#   --num $ITERATIONS \
-#   --out_frames facemorph-frames \
-#   --background=transparent"
+echo -e "\n\n\nFacemorpher generating frames"
+rm -rf $FOLDER/facemorph-frames
+docker compose run --rm facemorpher bash -c "facemorpher \
+  --src $SRC_IMG \
+  --dest $DST_IMG \
+  --num $ITERATIONS \
+  --out_frames facemorph-frames \
+  --background=transparent"
 
-# OPTIONS=("full" "head" "face")
-# for MORPH in "${OPTIONS[@]}"; do
-#   docker compose run --rm morph bash -c "python /morphing/morpher.py \
-#     --src $SRC_IMG \
-#     --dst $DST_IMG \
-#     --out morphing/$MORPH \
-#     --frames facemorph-frames \
-#     --morph $MORPH \
-#     --iterations $ITERATIONS"
-# done
+OPTIONS=("full" "head" "face")
+for MORPH in "${OPTIONS[@]}"; do
+  docker compose run --rm morph bash -c "python /morphing/morpher.py \
+    --src $SRC_IMG \
+    --dst $DST_IMG \
+    --out morphing/$MORPH \
+    --frames facemorph-frames \
+    --morph $MORPH \
+    --iterations $ITERATIONS"
+done
 
-# # if detect-morph crashes due to lack of memory, reduce the batch size
-# docker compose run --rm morph bash -c "python /morphing/prepare_csvs.py \
-#   --dst $DST_IMG \
-#   --morphs /$FOLDER/morphing/ \
-#   --batch_size 30"
-
-
-
-# rm -rf $FOLDER/det_diff_results
-# docker compose run --rm detect-diff bash -c "python main.py \
-#   --data_dir /$FOLDER/morphing/ \
-#   --out_dir /$FOLDER/det_diff_results \
-#   --csv_file /$FOLDER/morphing/detect-diff.csv"
+# if detect-morph crashes due to lack of memory, reduce the batch size
+docker compose run --rm morph bash -c "python /morphing/prepare_csvs.py \
+  --dst $DST_IMG \
+  --morphs /$FOLDER/morphing/ \
+  --batch_size 30"
 
 
 
-# rm -rf $FOLDER/det_morph_results
-# docker compose run --rm detect-morph bash -c "/detect-morph/wrapper.sh \
-#   /$FOLDER/morphing \
-#   /$FOLDER/det_morph_results"
+rm -rf $FOLDER/det_diff_results
+docker compose run --rm detect-diff bash -c "python main.py \
+  --data_dir /$FOLDER/morphing/ \
+  --out_dir /$FOLDER/det_diff_results \
+  --csv_file /$FOLDER/morphing/detect-diff.csv"
 
 
 
-# mkdir $FOLDER/det_arcfaces
-# docker compose run --rm arcfaces bash -c "python /arcfaces/arcfaces.py \
-#   --people \"[['diffused', ['/$FOLDER/$SRC_IMG']], ['original', ['/$FOLDER/$DST_IMG']]]\" \
-#   --images_dir /$FOLDER/morphing/head \
-#   --out_dir /$FOLDER/det_arcfaces"
+rm -rf $FOLDER/det_morph_results
+docker compose run --rm detect-morph bash -c "/detect-morph/wrapper.sh \
+  /$FOLDER/morphing \
+  /$FOLDER/det_morph_results"
+
+
+
+mkdir $FOLDER/det_arcfaces
+docker compose run --rm arcfaces bash -c "python /arcfaces/arcfaces.py \
+  --people \"[['diffused', ['/$FOLDER/$SRC_IMG']], ['original', ['/$FOLDER/$DST_IMG']]]\" \
+  --images_dir /$FOLDER/morphing/head \
+  --out_dir /$FOLDER/det_arcfaces"
